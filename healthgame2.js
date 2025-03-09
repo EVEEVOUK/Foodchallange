@@ -1,11 +1,12 @@
 let foods = [];
 let score = 0;
-let gameState = "start"; // Changed initial state to "start"
+let gameState = "start"; // Initial state
 let doorWidth;
 let speedMultiplier = 1;
 let restartButton;
 let scaleFactor; // For responsive scaling
 let startTimer; // Timer for start message
+let isFirstRun = true; // Flag to show instructions only once
 
 function setup() {
   let canvasWidth = min(windowWidth, 800);
@@ -333,15 +334,18 @@ function drawStartScreen() {
   background(20, 40, 60);
   drawStars();
   
+  hero.update();
+  hero.show();
+  
   fill(255);
   textSize(20 * scaleFactor);
   textAlign(CENTER);
   text("Move your cursor to choose the healthy food", width / 2, height / 2 - (20 * scaleFactor));
   text("avoid the burgers, pizza and ice cream to win!!", width / 2, height / 2 + (20 * scaleFactor));
   
-  // Switch to playing state after 3 seconds (3000ms)
   if (millis() - startTimer > 3000) {
     gameState = "playing";
+    isFirstRun = false;
   }
 }
 
@@ -357,24 +361,25 @@ function drawGameOver() {
   textSize(20 * scaleFactor);
   text(`Score: ${score}`, width / 2, height / 2 - (50 * scaleFactor));
   
+  // Slower and larger green animated text with increased spacing
   push();
-  let pulse = 1 + sin(frameCount * 0.05) * 0.1;
+  let pulse = 1 + sin(frameCount * 0.025) * 0.1;
   scale(pulse);
   fill(0, 255, 0);
-  textSize(24 * scaleFactor / pulse);
-  text("Crushed it with eco-food, now", width / 2 / pulse, height / 2 + (10 * scaleFactor) / pulse);
-  text("switch your ride to eco-transport!", width / 2 / pulse, height / 2 + (30 * scaleFactor) / pulse);
+  textSize(28 * scaleFactor / pulse);
+  text("Crushed it with eco-food, now", width / 2 / pulse, height / 2 + (0 * scaleFactor) / pulse); // Moved up from 10
+  text("switch your ride to eco-transport!", width / 2 / pulse, height / 2 + (30 * scaleFactor) / pulse); // Increased from 30 to 40
   fill(0, 255, 0);
-  text("EVEEVO’s got your EV waiting!", width / 2 / pulse, height / 2 + (50 * scaleFactor) / pulse);
+  text("EVEEVO’s got your EV waiting!", width / 2 / pulse, height / 2 + (70 * scaleFactor) / pulse); // Increased from 50 to 70
   pop();
   
   fill(255);
   textSize(18 * scaleFactor);
-  text("Click below to signup now!", width / 2, height / 2 + (80 * scaleFactor));
+  text("Click below to signup now!", width / 2, height / 2 + (100 * scaleFactor)); // Adjusted from 80 to 100
   
   let buttonText = "eveevo.co.uk";
   let buttonX = width / 2 - (60 * scaleFactor);
-  let buttonY = height / 2 + (140 * scaleFactor);
+  let buttonY = height / 2 + (140 * scaleFactor); // Kept at 140, still fits
   let buttonWidth = 120 * scaleFactor;
   let buttonHeight = 40 * scaleFactor;
   
@@ -390,8 +395,7 @@ function resetGame() {
   foods = [];
   score = 0;
   speedMultiplier = 1;
-  gameState = "start"; // Reset to start screen
-  startTimer = millis(); // Reset timer
+  gameState = "playing";
 }
 
 function keyPressed() {
@@ -401,7 +405,7 @@ function keyPressed() {
 }
 
 function touchMoved() {
-  if (gameState === "playing") {
+  if (gameState === "playing" || (gameState === "start" && isFirstRun)) {
     hero.x = constrain(mouseX, hero.size / 2, width - hero.size / 2);
   }
   return false;
@@ -421,8 +425,26 @@ function mousePressed() {
   }
 }
 
+function touchStarted() {
+  if (gameState === "gameover") {
+    let buttonX = width / 2 - (60 * scaleFactor);
+    let buttonY = height / 2 + (140 * scaleFactor);
+    let buttonWidth = 120 * scaleFactor;
+    let buttonHeight = 40 * scaleFactor;
+    
+    let touchX = touches.length > 0 ? touches[0].x : mouseX;
+    let touchY = touches.length > 0 ? touches[0].y : mouseY;
+    
+    if (touchX > buttonX && touchX < buttonX + buttonWidth &&
+        touchY > buttonY && touchY < buttonY + buttonHeight) {
+      window.open("https://www.eveevo.co.uk", "_blank");
+    }
+  }
+  return false;
+}
+
 function draw() {
-  if (gameState === "start") {
+  if (gameState === "start" && isFirstRun) {
     drawStartScreen();
   } else if (gameState === "playing") {
     background(20, 40, 60);
