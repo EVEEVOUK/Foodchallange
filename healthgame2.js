@@ -29,13 +29,13 @@ function setup() {
   restartButton.mousePressed(resetGame);
 
   signupButton = createButton('eveevo.co.uk');
-  signupButton.size(180 * scaleFactor, 50 * scaleFactor); // Increased from 150x40 to 180x50
+  signupButton.size(180 * scaleFactor, 50 * scaleFactor);
   signupButton.style('font-size', `${24 * scaleFactor}px`);
   signupButton.style('background-color', '#00FF00');
-  signupButton.style('color', '#FFFFFF');
-  signupButton.style('border', `${2 * scaleFactor}px solid #FFFFFF`); // Added white border
+  signupButton.style('color', '#000000'); // Changed from #FFFFFF to #000000
+  signupButton.style('border', `${2 * scaleFactor}px solid #FFFFFF`);
   signupButton.style('border-radius', `${5 * scaleFactor}px`);
-  signupButton.style('padding', `${10 * scaleFactor}px ${20 * scaleFactor}px`); // Consistent padding: 10 top/bottom, 20 left/right
+  signupButton.style('padding', `${10 * scaleFactor}px ${20 * scaleFactor}px`);
   signupButton.hide();
   signupButton.mousePressed(() => {
     window.open("https://www.eveevo.co.uk", "_blank");
@@ -56,7 +56,7 @@ function windowResized() {
 
 function positionUIElements() {
   restartButton.position(width / 2 - (60 * scaleFactor), height - (80 * scaleFactor));
-  signupButton.position(width / 2 - (90 * scaleFactor), height / 2 + (140 * scaleFactor)); // Adjusted for wider button (half of 180)
+  signupButton.position(width / 2 - (90 * scaleFactor), height / 2 + (140 * scaleFactor));
 }
 
 // Hero Class (unchanged)
@@ -323,6 +323,7 @@ function drawDoor() {
   rect(width / 2 - doorWidth / 2, height - (50 * scaleFactor), doorWidth, 50 * scaleFactor);
   fill(255);
   textSize(20 * scaleFactor);
+  textAlign(CENTER, CENTER);
   text("Exit", width / 2, height - (25 * scaleFactor));
 }
 
