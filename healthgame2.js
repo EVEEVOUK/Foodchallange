@@ -18,8 +18,10 @@ function setup() {
   textAlign(CENTER);
 
   restartButton = createButton('Restart');
-  restartButton.size(80 * scaleFactor, 40 * scaleFactor);
-  restartButton.style('font-size', `${20 * scaleFactor}px`);
+  restartButton.size(120 * scaleFactor, 60 * scaleFactor);
+  restartButton.style('font-size', `${24 * scaleFactor}px`);
+  restartButton.style('background-color', '#FFFFFF');
+  restartButton.style('color', '#000000');
   restartButton.hide();
   restartButton.mousePressed(resetGame);
 
@@ -36,7 +38,7 @@ function windowResized() {
 }
 
 function positionUIElements() {
-  restartButton.position(width / 2 - (40 * scaleFactor), height - (100 * scaleFactor));
+  restartButton.position(width / 2 - (60 * scaleFactor), height - (80 * scaleFactor));
 }
 
 // Hero Class (unchanged)
@@ -309,10 +311,14 @@ function drawStars() {
 
 function drawUI() {
   fill(255);
+  textSize(24 * scaleFactor); // Slightly larger for title
+  textAlign(CENTER);
+  text("EVEEVO ECO-FOOD CHALLENGE", width / 2, 30 * scaleFactor); // Centered at top
+  
   textSize(20 * scaleFactor);
   textAlign(LEFT);
-  text(`Score: ${score}`, 20 * scaleFactor, 30 * scaleFactor);
-  text(`Energy: ${hero.energy}%`, 20 * scaleFactor, 60 * scaleFactor);
+  text(`Score: ${score}`, 20 * scaleFactor, 60 * scaleFactor); // Adjusted down
+  text(`Energy: ${hero.energy}%`, 20 * scaleFactor, 90 * scaleFactor); // Adjusted down
 }
 
 function checkGameOver() {
@@ -328,39 +334,35 @@ function drawGameOver() {
   fill(255);
   textAlign(CENTER);
   textSize(40 * scaleFactor);
-  text("Too Big to Fit!", width / 2, height / 2 - (80 * scaleFactor));
+  text("Too Big to Fit!", width / 2, height / 2 - (100 * scaleFactor));
   
   textSize(20 * scaleFactor);
-  text(`Score: ${score}`, width / 2, height / 2 - (30 * scaleFactor));
+  text(`Score: ${score}`, width / 2, height / 2 - (50 * scaleFactor));
   
-  // Updated snappy message with pulsing animation
+  // Snappy message with pulsing animation
   push();
   let pulse = 1 + sin(frameCount * 0.1) * 0.1;
   scale(pulse);
-  fill(0, 255, 0); // Green for emphasis
-  textSize(25 * scaleFactor / pulse);
-  text("Crushed it with eco-food, now switch your ride to eco-transport!", width / 2 / pulse, height / 2 + (20 * scaleFactor) / pulse);
+  fill(0, 255, 0);
+  textSize(20 * scaleFactor / pulse);
+  text("Crushed it with eco-food, now", width / 2 / pulse, height / 2 + (10 * scaleFactor) / pulse);
+  text("switch your ride to eco-transport!", width / 2 / pulse, height / 2 + (30 * scaleFactor) / pulse);
   fill(255);
   text("EVEEVO’s got your EV waiting!", width / 2 / pulse, height / 2 + (50 * scaleFactor) / pulse);
   pop();
   
-  // Static signup prompt
   fill(255);
-  textSize(20 * scaleFactor);
+  textSize(18 * scaleFactor);
   text("Click below to signup now!", width / 2, height / 2 + (80 * scaleFactor));
   
-  // Restart instructions
-  text("Press SPACE or Tap Restart to retry", width / 2, height / 2 + (110 * scaleFactor));
-  
-  // Clickable EVEEVO link
   let linkText = "eveevo.co.uk";
   let linkX = width / 2;
-  let linkY = height / 2 + (140 * scaleFactor);
+  let linkY = height / 2 + (110 * scaleFactor);
   let linkWidth = textWidth(linkText);
-  let linkHeight = 18 * scaleFactor;
+  let linkHeight = 24 * scaleFactor;
   
   fill(0, 191, 255);
-  textSize(18 * scaleFactor);
+  textSize(24 * scaleFactor);
   text(linkText, linkX, linkY);
   
   stroke(0, 191, 255);
@@ -393,17 +395,15 @@ function touchMoved() {
 
 function mousePressed() {
   if (gameState === "gameover") {
-    // Define clickable area for the EVEEVO link
     let linkText = "eveevo.co.uk";
     let linkX = width / 2;
-    let linkY = height / 2 + (140 * scaleFactor);
+    let linkY = height / 2 + (110 * scaleFactor);
     let linkWidth = textWidth(linkText);
-    let linkHeight = 18 * scaleFactor;
+    let linkHeight = 24 * scaleFactor;
     
-    // Check if click is within the link bounds
     if (mouseX > linkX - linkWidth / 2 && mouseX < linkX + linkWidth / 2 &&
         mouseY > linkY - linkHeight / 2 && mouseY < linkY + linkHeight / 2) {
-      window.open("https://www.eveevo.co.uk", "_blank"); // Open EVEEVO website in new tab
+      window.open("https://www.eveevo.co.uk", "_blank");
     }
   }
 }
