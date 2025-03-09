@@ -7,30 +7,26 @@ let restartButton;
 let scaleFactor; // For responsive scaling
 
 function setup() {
-  // Set canvas to fit screen with max limits
-  let canvasWidth = min(windowWidth, 800); // Cap for desktop
-  let canvasHeight = min(windowHeight, 1000); // Cap for desktop
+  let canvasWidth = min(windowWidth, 800);
+  let canvasHeight = min(windowHeight, 1000);
   createCanvas(canvasWidth, canvasHeight);
 
-  // Calculate scale factor based on base resolution (600x800)
   scaleFactor = min(width / 600, height / 800);
-  doorWidth = 100 * scaleFactor; // Scale door dynamically
+  doorWidth = 100 * scaleFactor;
 
   hero = new Hero();
   textAlign(CENTER);
 
-  // Restart button
   restartButton = createButton('Restart');
-  restartButton.size(80 * scaleFactor, 40 * scaleFactor); // Scale button
+  restartButton.size(80 * scaleFactor, 40 * scaleFactor);
   restartButton.style('font-size', `${20 * scaleFactor}px`);
   restartButton.hide();
   restartButton.mousePressed(resetGame);
 
-  positionUIElements(); // Initial positioning
+  positionUIElements();
 }
 
 function windowResized() {
-  // Resize canvas on window change
   let canvasWidth = min(windowWidth, 800);
   let canvasHeight = min(windowHeight, 1000);
   resizeCanvas(canvasWidth, canvasHeight);
@@ -43,13 +39,13 @@ function positionUIElements() {
   restartButton.position(width / 2 - (40 * scaleFactor), height - (100 * scaleFactor));
 }
 
-// Hero Class
+// Hero Class (unchanged)
 class Hero {
   constructor() {
     this.x = width / 2;
-    this.size = 50 * scaleFactor; // Scaled size
+    this.size = 50 * scaleFactor;
     this.energy = 100;
-    this.speed = 5 * scaleFactor; // Scaled speed
+    this.speed = 5 * scaleFactor;
     this.velocity = 0;
   }
 
@@ -86,7 +82,7 @@ class Hero {
   }
 }
 
-// Food Class
+// Food Class (unchanged)
 class Food {
   constructor(type) {
     this.x = random(20 * scaleFactor, width - (20 * scaleFactor));
@@ -328,16 +324,49 @@ function checkGameOver() {
 function drawGameOver() {
   fill(0, 150);
   rect(0, 0, width, height);
+  
   fill(255);
   textAlign(CENTER);
   textSize(40 * scaleFactor);
-  text("Too Big to Fit!", width / 2, height / 2 - (50 * scaleFactor));
+  text("Too Big to Fit!", width / 2, height / 2 - (80 * scaleFactor));
+  
   textSize(20 * scaleFactor);
-  text(`Score: ${score}`, width / 2, height / 2);
-  text("Press SPACE or Tap Restart to retry.", width / 2, height / 2 + (50 * scaleFactor));
-  text("Eat Healthy Download the REALGRRT APP now:", width / 2, height / 2 + (100 * scaleFactor));
+  text(`Score: ${score}`, width / 2, height / 2 - (30 * scaleFactor));
+  
+  // Updated snappy message with pulsing animation
+  push();
+  let pulse = 1 + sin(frameCount * 0.1) * 0.1;
+  scale(pulse);
+  fill(0, 255, 0); // Green for emphasis
+  textSize(25 * scaleFactor / pulse);
+  text("Crushed it with eco-food, now switch your ride to eco-transport!", width / 2 / pulse, height / 2 + (20 * scaleFactor) / pulse);
+  fill(255);
+  text("EVEEVO’s got your EV waiting!", width / 2 / pulse, height / 2 + (50 * scaleFactor) / pulse);
+  pop();
+  
+  // Static signup prompt
+  fill(255);
+  textSize(20 * scaleFactor);
+  text("Click below to signup now!", width / 2, height / 2 + (80 * scaleFactor));
+  
+  // Restart instructions
+  text("Press SPACE or Tap Restart to retry", width / 2, height / 2 + (110 * scaleFactor));
+  
+  // Clickable EVEEVO link
+  let linkText = "eveevo.co.uk";
+  let linkX = width / 2;
+  let linkY = height / 2 + (140 * scaleFactor);
+  let linkWidth = textWidth(linkText);
+  let linkHeight = 18 * scaleFactor;
+  
   fill(0, 191, 255);
-  text("https://realgrrtapp.com", width / 2, height / 2 + (130 * scaleFactor));
+  textSize(18 * scaleFactor);
+  text(linkText, linkX, linkY);
+  
+  stroke(0, 191, 255);
+  strokeWeight(1 * scaleFactor);
+  line(linkX - linkWidth / 2, linkY + (5 * scaleFactor), linkX + linkWidth / 2, linkY + (5 * scaleFactor));
+  noStroke();
 }
 
 function resetGame() {
@@ -346,6 +375,7 @@ function resetGame() {
   score = 0;
   speedMultiplier = 1;
   gameState = "playing";
+  restartButton.hide();
 }
 
 function keyPressed() {
@@ -358,7 +388,24 @@ function touchMoved() {
   if (gameState === "playing") {
     hero.x = constrain(mouseX, hero.size / 2, width - hero.size / 2);
   }
-  return false; // Prevent scrolling on mobile
+  return false;
+}
+
+function mousePressed() {
+  if (gameState === "gameover") {
+    // Define clickable area for the EVEEVO link
+    let linkText = "eveevo.co.uk";
+    let linkX = width / 2;
+    let linkY = height / 2 + (140 * scaleFactor);
+    let linkWidth = textWidth(linkText);
+    let linkHeight = 18 * scaleFactor;
+    
+    // Check if click is within the link bounds
+    if (mouseX > linkX - linkWidth / 2 && mouseX < linkX + linkWidth / 2 &&
+        mouseY > linkY - linkHeight / 2 && mouseY < linkY + linkHeight / 2) {
+      window.open("https://www.eveevo.co.uk", "_blank"); // Open EVEEVO website in new tab
+    }
+  }
 }
 
 function draw() {
