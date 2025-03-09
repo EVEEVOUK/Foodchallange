@@ -4,6 +4,7 @@ let gameState = "start"; // Initial state
 let doorWidth;
 let speedMultiplier = 1;
 let restartButton;
+let signupButton;
 let scaleFactor; // For responsive scaling
 let startTimer; // Timer for start message
 let isFirstRun = true; // Flag to show instructions only once
@@ -27,6 +28,18 @@ function setup() {
   restartButton.hide();
   restartButton.mousePressed(resetGame);
 
+  signupButton = createButton('eveevo.co.uk');
+  signupButton.size(120 * scaleFactor, 40 * scaleFactor);
+  signupButton.style('font-size', `${20 * scaleFactor}px`);
+  signupButton.style('background-color', '#00BFFF');
+  signupButton.style('color', '#FFFFFF');
+  signupButton.style('border', 'none');
+  signupButton.style('border-radius', `${5 * scaleFactor}px`);
+  signupButton.hide();
+  signupButton.mousePressed(() => {
+    window.open("https://www.eveevo.co.uk", "_blank");
+  });
+
   positionUIElements();
   startTimer = millis(); // Start timer when setup runs
 }
@@ -42,29 +55,38 @@ function windowResized() {
 
 function positionUIElements() {
   restartButton.position(width / 2 - (60 * scaleFactor), height - (80 * scaleFactor));
+  signupButton.position(width / 2 - (60 * scaleFactor), height / 2 + (140 * scaleFactor));
 }
 
-// Hero Class (unchanged)
+// Hero Class
 class Hero {
   constructor() {
     this.x = width / 2;
     this.size = 50 * scaleFactor;
     this.energy = 100;
-    this.speed = 5 * scaleFactor;
+    this.speed = 10 * scaleFactor; // Increased from 5 for responsiveness
     this.velocity = 0;
   }
 
   update() {
+    // Only move if an input is active; no return to center
     if (keyIsDown(LEFT_ARROW)) {
-      this.velocity = -this.speed;
+      this.velocity = -this.speed; // Direct speed, no damping
     } else if (keyIsDown(RIGHT_ARROW)) {
-      this.velocity = this.speed;
+      this.velocity = this.speed; // Direct speed, no damping
     } else {
-      let targetX = constrain(mouseX, this.size / 2, width - this.size / 2);
-      this.velocity = (targetX - this.x) * 0.1;
+      this.velocity = 0; // Stop immediately when no keys are pressed
     }
-    this.x += this.velocity;
-    this.x = constrain(this.x, this.size / 2, width - this.size / 2);
+
+    // Mouse movement overrides arrow keys if active
+    if (mouseIsPressed) {
+      this.x = constrain(mouseX, this.size / 2, width - this.size / 2);
+      this.velocity = 0; // Reset velocity to avoid conflict
+    } else {
+      this.x += this.velocity; // Apply velocity only for arrow keys
+      this.x = constrain(this.x, this.size / 2, width - this.size / 2);
+    }
+
     this.size = map(this.energy, 100, 0, 50 * scaleFactor, 150 * scaleFactor);
   }
 
@@ -334,7 +356,7 @@ function drawStartScreen() {
   background(20, 40, 60);
   drawStars();
   
-  hero.update();
+  hero.update(); // Arrow keys work here
   hero.show();
   
   fill(255);
@@ -361,33 +383,22 @@ function drawGameOver() {
   textSize(20 * scaleFactor);
   text(`Score: ${score}`, width / 2, height / 2 - (50 * scaleFactor));
   
-  // Slower and larger green animated text with increased spacing
   push();
   let pulse = 1 + sin(frameCount * 0.025) * 0.1;
   scale(pulse);
   fill(0, 255, 0);
   textSize(28 * scaleFactor / pulse);
-  text("Crushed it with eco-food, now", width / 2 / pulse, height / 2 + (0 * scaleFactor) / pulse); // Moved up from 10
-  text("switch your ride to eco-transport!", width / 2 / pulse, height / 2 + (30 * scaleFactor) / pulse); // Increased from 30 to 40
+  text("Crushed it with eco-food, now", width / 2 / pulse, height / 2 + (0 * scaleFactor) / pulse);
+  text("switch your ride to eco-transport!", width / 2 / pulse, height / 2 + (30 * scaleFactor) / pulse);
   fill(0, 255, 0);
-  text("EVEEVO’s got your EV waiting!", width / 2 / pulse, height / 2 + (70 * scaleFactor) / pulse); // Increased from 50 to 70
+  text("EVEEVO’s got your EV waiting!", width / 2 / pulse, height / 2 + (70 * scaleFactor) / pulse);
   pop();
   
   fill(255);
   textSize(18 * scaleFactor);
-  text("Click below to signup now!", width / 2, height / 2 + (100 * scaleFactor)); // Adjusted from 80 to 100
+  text("Click below to signup now!", width / 2, height / 2 + (100 * scaleFactor));
   
-  let buttonText = "eveevo.co.uk";
-  let buttonX = width / 2 - (60 * scaleFactor);
-  let buttonY = height / 2 + (140 * scaleFactor); // Kept at 140, still fits
-  let buttonWidth = 120 * scaleFactor;
-  let buttonHeight = 40 * scaleFactor;
-  
-  fill(0, 191, 255);
-  rect(buttonX, buttonY, buttonWidth, buttonHeight, 5 * scaleFactor);
-  fill(255);
-  textSize(20 * scaleFactor);
-  text(buttonText, width / 2, buttonY + (28 * scaleFactor));
+  signupButton.show();
 }
 
 function resetGame() {
@@ -396,6 +407,7 @@ function resetGame() {
   score = 0;
   speedMultiplier = 1;
   gameState = "playing";
+  signupButton.hide();
 }
 
 function keyPressed() {
@@ -407,38 +419,6 @@ function keyPressed() {
 function touchMoved() {
   if (gameState === "playing" || (gameState === "start" && isFirstRun)) {
     hero.x = constrain(mouseX, hero.size / 2, width - hero.size / 2);
-  }
-  return false;
-}
-
-function mousePressed() {
-  if (gameState === "gameover") {
-    let buttonX = width / 2 - (60 * scaleFactor);
-    let buttonY = height / 2 + (140 * scaleFactor);
-    let buttonWidth = 120 * scaleFactor;
-    let buttonHeight = 40 * scaleFactor;
-    
-    if (mouseX > buttonX && mouseX < buttonX + buttonWidth &&
-        mouseY > buttonY && mouseY < buttonY + buttonHeight) {
-      window.open("https://www.eveevo.co.uk", "_blank");
-    }
-  }
-}
-
-function touchStarted() {
-  if (gameState === "gameover") {
-    let buttonX = width / 2 - (60 * scaleFactor);
-    let buttonY = height / 2 + (140 * scaleFactor);
-    let buttonWidth = 120 * scaleFactor;
-    let buttonHeight = 40 * scaleFactor;
-    
-    let touchX = touches.length > 0 ? touches[0].x : mouseX;
-    let touchY = touches.length > 0 ? touches[0].y : mouseY;
-    
-    if (touchX > buttonX && touchX < buttonX + buttonWidth &&
-        touchY > buttonY && touchY < buttonY + buttonHeight) {
-      window.open("https://www.eveevo.co.uk", "_blank");
-    }
   }
   return false;
 }
@@ -457,6 +437,7 @@ function draw() {
     drawUI();
     checkGameOver();
     restartButton.hide();
+    signupButton.hide();
   } else if (gameState === "gameover") {
     drawGameOver();
     restartButton.show();
