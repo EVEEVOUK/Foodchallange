@@ -29,12 +29,13 @@ function setup() {
   restartButton.mousePressed(resetGame);
 
   signupButton = createButton('eveevo.co.uk');
-  signupButton.size(120 * scaleFactor, 40 * scaleFactor);
-  signupButton.style('font-size', `${20 * scaleFactor}px`);
-  signupButton.style('background-color', '#00BFFF');
+  signupButton.size(180 * scaleFactor, 50 * scaleFactor); // Increased from 150x40 to 180x50
+  signupButton.style('font-size', `${24 * scaleFactor}px`);
+  signupButton.style('background-color', '#00FF00');
   signupButton.style('color', '#FFFFFF');
-  signupButton.style('border', 'none');
+  signupButton.style('border', `${2 * scaleFactor}px solid #FFFFFF`); // Added white border
   signupButton.style('border-radius', `${5 * scaleFactor}px`);
+  signupButton.style('padding', `${10 * scaleFactor}px ${20 * scaleFactor}px`); // Consistent padding: 10 top/bottom, 20 left/right
   signupButton.hide();
   signupButton.mousePressed(() => {
     window.open("https://www.eveevo.co.uk", "_blank");
@@ -55,35 +56,33 @@ function windowResized() {
 
 function positionUIElements() {
   restartButton.position(width / 2 - (60 * scaleFactor), height - (80 * scaleFactor));
-  signupButton.position(width / 2 - (60 * scaleFactor), height / 2 + (140 * scaleFactor));
+  signupButton.position(width / 2 - (90 * scaleFactor), height / 2 + (140 * scaleFactor)); // Adjusted for wider button (half of 180)
 }
 
-// Hero Class
+// Hero Class (unchanged)
 class Hero {
   constructor() {
     this.x = width / 2;
     this.size = 50 * scaleFactor;
     this.energy = 100;
-    this.speed = 10 * scaleFactor; // Increased from 5 for responsiveness
+    this.speed = 10 * scaleFactor;
     this.velocity = 0;
   }
 
   update() {
-    // Only move if an input is active; no return to center
     if (keyIsDown(LEFT_ARROW)) {
-      this.velocity = -this.speed; // Direct speed, no damping
+      this.velocity = -this.speed;
     } else if (keyIsDown(RIGHT_ARROW)) {
-      this.velocity = this.speed; // Direct speed, no damping
+      this.velocity = this.speed;
     } else {
-      this.velocity = 0; // Stop immediately when no keys are pressed
+      this.velocity = 0;
     }
 
-    // Mouse movement overrides arrow keys if active
     if (mouseIsPressed) {
       this.x = constrain(mouseX, this.size / 2, width - this.size / 2);
-      this.velocity = 0; // Reset velocity to avoid conflict
+      this.velocity = 0;
     } else {
-      this.x += this.velocity; // Apply velocity only for arrow keys
+      this.x += this.velocity;
       this.x = constrain(this.x, this.size / 2, width - this.size / 2);
     }
 
@@ -356,13 +355,13 @@ function drawStartScreen() {
   background(20, 40, 60);
   drawStars();
   
-  hero.update(); // Arrow keys work here
+  hero.update();
   hero.show();
   
   fill(255);
   textSize(20 * scaleFactor);
   textAlign(CENTER);
-  text("Move your cursor to choose the healthy food", width / 2, height / 2 - (20 * scaleFactor));
+  text("Move your cursor or arrow keys to choose the healthy food", width / 2, height / 2 - (20 * scaleFactor));
   text("avoid the burgers, pizza and ice cream to win!!", width / 2, height / 2 + (20 * scaleFactor));
   
   if (millis() - startTimer > 3000) {
